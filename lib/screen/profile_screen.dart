@@ -1,0 +1,96 @@
+import "package:bookbazaar/components/error%20_snackbar.dart";
+import "package:bookbazaar/components/share_prefs.dart";
+import "package:flutter/material.dart";
+
+import "../components/custom_appbar.dart";
+import "../components/user_input_feild.dart";
+
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => ProfileScreenState();
+}
+
+class ProfileScreenState extends State<ProfileScreen> {
+  UserInputFeild feild = UserInputFeild();
+    TextEditingController namecontroller = TextEditingController();
+  TextEditingController lastnamecontroller = TextEditingController();
+  TextEditingController mobilecontroller = TextEditingController();
+  TextEditingController adresscontroller = TextEditingController();
+  bool isLoading = false;
+  bool readOnly = true;
+  String buttonText = "Edit Profile";
+
+  void getSharedPref() async{
+
+    namecontroller.text = await SharePrefs.readPrefs("name", "string");
+      lastnamecontroller.text = await SharePrefs.readPrefs("lastname", "string");
+        mobilecontroller.text = await SharePrefs.readPrefs("mobile", "string");
+          adresscontroller.text = await SharePrefs.readPrefs("city", "string");
+
+  }
+
+  @override
+  void initState() {
+    getSharedPref();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold( 
+      appBar:CustomAppBar.screenAppbar("Profile"),
+      body: SingleChildScrollView( 
+        child: Column( 
+          children: [ 
+             Center(
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(25.0, 20.0, 25.0, 7.0),
+              child: const Center(
+                  child: Text(
+                'BookBazaar!',
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.w500,
+                ),
+              )),
+            ),
+          ),
+          SizedBox(height: 15),
+             feild.inputContainerText(context, namecontroller, "Enter First Name",
+              Icon(Icons.person_2_outlined),readOnly:readOnly),
+          SizedBox(height: 25),
+          feild.inputContainerText(context, lastnamecontroller,
+              "Enter Last Name", Icon(Icons.last_page_outlined),readOnly:readOnly),
+          SizedBox(height: 25),
+          feild.inputContainerText(context, mobilecontroller, "Enter Mobile No",
+              Icon(Icons.mobile_friendly_outlined),readOnly:readOnly),
+          SizedBox(height: 25),
+          feild.inputContainerText(context, adresscontroller, "Enter City Name",
+              Icon(Icons.location_city),readOnly:readOnly),
+          SizedBox(height: 25),
+          feild.buttonContainer(context, buttonText, () async {
+            if (namecontroller.text.isEmpty ||
+                lastnamecontroller.text.isEmpty ||
+                mobilecontroller.text.isEmpty ||
+                adresscontroller.text.isEmpty) {
+              InputComponent.showWarningSnackBar(context, "Enter Valid Data");
+            } else if (mobilecontroller.text.length != 10) {
+              InputComponent.showWarningSnackBar(
+                  context, "Enter Valid Mobile No");
+            } else {
+              setState(() {
+                isLoading = false;
+                readOnly = false;
+                buttonText = "Save Profile";
+              });
+              // await UpdateUser();
+            }
+          }, isLoading),
+          ],
+        ),
+      ),
+    );
+  }
+}

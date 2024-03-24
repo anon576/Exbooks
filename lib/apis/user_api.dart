@@ -1,0 +1,185 @@
+import 'dart:convert';
+import 'package:bookbazaar/components/share_prefs.dart';
+import 'package:http/http.dart' as http;
+
+class ApiService {
+  static Future<Map<dynamic,dynamic>> sendDataToServer({
+    required String? email,
+  }) async {
+    // Convert DateTime objects to ISO 8601 formatted strings
+  
+    Map<String, dynamic> userData = {
+     "email":email
+    };
+
+    // Convert the data to JSON
+    String jsonData = jsonEncode(userData);
+
+    // Specify the API endpoint URL
+    Uri apiUrl = Uri.parse('http://192.168.43.192:5000/join');
+
+    try {
+      http.Response response = await http.post(
+        apiUrl,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonData,
+      );
+
+      if (response.statusCode == 200) {
+        dynamic responseData = jsonDecode(response.body);
+        Map<dynamic,dynamic> data = {
+          "success":true,
+          "userExist":responseData['userExist'],
+          "otp":responseData['otp']
+        };
+   
+          return data;
+      
+      } else {
+        // Error
+        print('Failed to send data. Status code: ${response.statusCode}');
+        Map<dynamic,dynamic> data = {
+          "success":false
+        };
+        return data;
+      }
+    } catch (error) {
+      print('Error sending data: $error');
+       Map<dynamic,dynamic> data = {
+          "success":false
+        };
+        return data;
+    }
+  }
+
+  static Future<bool> registerUser({
+    required String name,
+    required String lastname,
+    required String mobileNo,
+    required String city,
+  }) async {
+    Map<String, dynamic> userData = {
+     "name":name,
+     "lasatname":lastname,
+     "mobileno":mobileNo,
+     "city":city,
+     "email":await SharePrefs.readPrefs("email", "string")
+      // Add other fields as needed
+    };
+    String jsonData = jsonEncode(userData);
+
+    // Specify the API endpoint URL
+    Uri apiUrl = Uri.parse('http://192.168.43.192:5000/register_user');
+
+    try {
+      http.Response response = await http.post(
+        apiUrl,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonData,
+      );
+
+      // Handle the response as needed
+      if (response.statusCode == 200) {
+        dynamic responseData = jsonDecode(response.body);
+
+        if (responseData['success']) {
+          int value = responseData['userID'];
+          SharePrefs.storePrefs("userID", value, "int");
+          SharePrefs.storePrefs("name", name, "string");
+          SharePrefs.storePrefs("lastname", lastname, "string");
+          SharePrefs.storePrefs("mobile", mobileNo,"string");
+          SharePrefs.storePrefs("city", city, "string");
+          return true;
+        }
+      return false;
+      } else {
+        // Error
+        print('Failed to send data. Status code: ${response.statusCode}');
+        // Return a different integer value for error cases
+        return false;
+      }
+    } catch (error) {
+      // Handle any errors that occurred during the HTTP request
+      print('Error sending data: $error');
+      // Return a different integer value for error cases
+      return false;
+    }
+  }
+
+ static Future<bool> addAddress({
+    required String country,
+    required String state,
+    required String city,
+    required int pin,
+    required String near
+  }) async {
+    Map<String, dynamic> userData = {
+     "country":country,
+     "city":city,
+     "state":state,
+     "pin":pin,
+     "near":near,
+     "userid":await SharePrefs.readPrefs("userID", "int")
+      // Add other fields as needed
+    };
+    String jsonData = jsonEncode(userData);
+
+    // Specify the API endpoint URL
+    Uri apiUrl = Uri.parse('http://192.168.43.192:5000/add_address');
+
+    try {
+      http.Response response = await http.post(
+        apiUrl,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonData,
+      );
+
+      // Handle the response as needed
+      if (response.statusCode == 200) {
+        dynamic responseData = jsonDecode(response.body);
+
+        if (responseData['success']) {
+          return true;
+        }
+      return false;
+      } else {
+        // Error
+        print('Failed to send data. Status code: ${response.statusCode}');
+        // Return a different integer value for error cases
+        return false;
+      }
+    } catch (error) {
+      // Handle any errors that occurred during the HTTP request
+      print('Error sending data: $error');
+      // Return a different integer value for error cases
+      return false;
+    }
+  }
+
+ static Future<List> getAddress() async {
+  try{
+int userid = await SharePrefs.readPrefs("userID", "int");
+    final response =
+        await http.get(Uri.parse('http://192.168.43.192:5000/get_address/?userid=$userid'));
+    if (response.statusCode == 200) {
+      Map<dynamic,dynamic> data = jsonDecode(response.body);
+      if(data['success']){
+      
+        if(data['address'] == null){
+            print(data['address']);
+          return [];
+        }
+        return data['address'];
+      }
+      return data["success"];
+    } else {
+      throw Exception('Failed to load products');
+    }
+  }catch(eror){
+    print(eror);
+    return [];
+  }
+  }
+    
+
+}
