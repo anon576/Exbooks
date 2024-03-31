@@ -1,11 +1,12 @@
-import 'package:bookbazaar/screen/cart_screen.dart';
-import 'package:bookbazaar/screen/category_screen.dart';
-import 'package:bookbazaar/screen/home_screen.dart';
-import 'package:bookbazaar/screen/other_screen.dart';
-import 'package:bookbazaar/screen/profile_screen.dart';
+import 'package:bookbazaar/screen/Order/order_details.dart';
+import 'package:bookbazaar/screen/User/signin_scree.dart';
 import 'package:flutter/material.dart';
-import 'screen/signin_scree.dart';
-import 'screen/user_data.dart';
+import 'screen/Cart/cart_screen.dart';
+import 'screen/User/profile_screen.dart';
+import 'screen/User/user_data.dart';
+import 'screen/home/category_screen.dart';
+import 'screen/home/home_screen.dart';
+import 'screen/home/other_screen.dart';
 
 
 
@@ -27,7 +28,9 @@ class MyApp extends StatelessWidget {
       routes: {
          '/userData': (context) => const UserData(),
          "/home":(context)=> MainScreen(),
-         "/profile":(context) =>ProfileScreen()
+         "/profile":(context) =>ProfileScreen(),
+         "/cart":(context)=>CartScreen()
+        //  "orderDetails":(context)=>OrderDetailsScreen()
          
       },
     );

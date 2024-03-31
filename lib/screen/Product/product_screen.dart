@@ -1,20 +1,44 @@
+import 'package:bookbazaar/apis/cart_api.dart';
+import 'package:bookbazaar/components/error%20_snackbar.dart';
+import 'package:bookbazaar/components/route.dart';
+import 'package:bookbazaar/screen/payment/payment_option.dart';
 import 'package:flutter/material.dart';
 
-import '../components/custom_appbar.dart';
+import '../../components/custom_appbar.dart';
 
 class ProductPageclass {
   final String name;
   final String imageUrl;
   final dynamic price;
+  final String author;
+  final String desc;
+  final String category;
+  final dynamic uid;
+  final dynamic bid;
+
 
   ProductPageclass(
-      {required this.name, required this.imageUrl, required this.price});
+      {required this.name, required this.imageUrl, required this.price, required this.author, required this.desc, required this.category, required this.uid, required this.bid});
 }
 
 class ProductPage extends StatelessWidget {
-  final ProductPageclass product;
+
+  final List<ProductPageclass> product;
 
   ProductPage({required this.product});
+
+  Future<void> addtocart(BuildContext context)async{
+    try{
+      Map<dynamic,dynamic> cart = await CartAPI.addToCart(bookID: product[0].bid);
+      if(cart['success']){
+        InputComponent.showErrorDialogBox(context, "Added to cart", "Cart");
+      }else{
+        InputComponent.showWarningSnackBar(context, "Server Error");
+      }
+    }catch(er){
+      InputComponent.showWarningSnackBar(context, "$er");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,14 +68,14 @@ class ProductPage extends StatelessWidget {
                       ],
                     ),
                     child: Image.network(
-                      product.imageUrl,
+                      "http://192.168.43.192:5000/${product[0].imageUrl}",
                       width: double.infinity,
                       fit: BoxFit.fitHeight,
                     ),
                   ),
                   SizedBox(height: 16.0),
                   Text(
-                    product.name,
+                    product[0].name,
                     style: TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
@@ -59,7 +83,7 @@ class ProductPage extends StatelessWidget {
                   ),
                   SizedBox(height: 8.0),
                   Text(
-                    'Auhor : Abhishek Bhoyar',
+                    'Auhor/Publication : Abhishek Bhoyar',
                     style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.normal,
@@ -94,7 +118,7 @@ class ProductPage extends StatelessWidget {
                           fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                     Text(
-                      '\$${product.price.toStringAsFixed(2)}',
+                      '\$${product[0].price}',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18.0,
@@ -111,8 +135,8 @@ class ProductPage extends StatelessWidget {
                         color: Colors.yellow,
                       ),
                       child: TextButton(
-                        onPressed: () {
-                          // Implement add to cart functionality
+                        onPressed: () async {
+                          await addtocart(context);
                         },
                         child: Text(
                           'Add to Cart',
@@ -129,7 +153,7 @@ class ProductPage extends StatelessWidget {
                       ),
                       child: TextButton(
                         onPressed: () {
-                          // Implement add to cart functionality
+                          RouterClass.AddScreen(context, PaymentOption(totalprice:product[0].price,product:product));
                         },
                         child: Text(
                           'Buy Now',

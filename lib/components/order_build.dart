@@ -1,13 +1,9 @@
-import "package:bookbazaar/apis/book_api.dart";
-import "package:bookbazaar/components/route.dart";
-import "package:bookbazaar/screen/Books/books_screen.dart";
-import "package:flutter/material.dart";
+import 'package:bookbazaar/components/route.dart';
+import 'package:flutter/material.dart';
+import '../screen/Order/order_details.dart';
 
-import "../screen/Books/updatebook.dart";
-import "error _snackbar.dart";
-
-class BookBuild {
-  static List<Widget> buildBook(BuildContext context, List<dynamic> data) {
+class OrderBuild {
+  static List<Widget> buildOrder(BuildContext context, List<dynamic> data) {
     final mediaQuery = MediaQuery.of(context).size;
     List<Widget> returnData = [];
 
@@ -23,10 +19,10 @@ class BookBuild {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.5), // Shadow color
-                  spreadRadius: 5, // Spread radius
-                  blurRadius: 7, // Blur radius
-                  offset: Offset(0, 3), // Offset in x and y directions
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: Offset(0, 3),
                 ),
               ],
             ),
@@ -40,24 +36,32 @@ class BookBuild {
           ),
           Column(
             children: [
-             Container(
+              Container(
                 margin: EdgeInsets.only(top: 12),
-                padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
                 height: mediaQuery.height * .07,
                 width: mediaQuery.width * .5,
                 decoration: BoxDecoration(
                     color: Colors.yellow,
                     borderRadius: BorderRadius.circular(12)),
-                child: TextButton(
-                  onPressed: () {
-                    RouterClass.AddScreen(context,UpdateBook(initialBookName: item['bookname'], 
-                    initialBookPrice: item['price'], initialBookAuthor: item['author'], initialBookDesc: item['description'], initialBookImage: item['imagepath'], category: item['category'],
-                    bid: item["bID"],));
-                  },
-                  child: Text(
-                    "Edit Book",
-                    style: TextStyle(color: Colors.black),
-                  ),
+                child: Text(
+                  "${item['bookname']}",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 12),
+                padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                height: mediaQuery.height * .07,
+                width: mediaQuery.width * .5,
+                decoration: BoxDecoration(
+                    color: Colors.yellow,
+                    borderRadius: BorderRadius.circular(12)),
+                child: Text(
+                  "${item['price']}",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.black),
                 ),
               ),
               Container(
@@ -69,19 +73,25 @@ class BookBuild {
                     color: Colors.yellow,
                     borderRadius: BorderRadius.circular(12)),
                 child: TextButton(
-                  onPressed: () async{
-                    bool book = await  BookAPI.deletebook(bid: item["bID"]);
-                    if(book){
-  Navigator.pop(context);
-  RouterClass.AddScreen(context, Books());
-                    }else{
-  InputComponent.showWarningSnackBar(context, "Server Error");
-                    }
+                  onPressed: () {
+                   RouterClass.AddScreen(context, OrderDetailsScreen(
+                          bookname: item['bookname'],
+                          imageUrl: item['imagepath'],
+                          author: item['author'],
+                          price: item['price'],
+                          date: item['order_date'],
+                          paymentStatus: item['paymentStatus'],
+                          country: item['country'],
+                          state: item['state'],
+                          city: item['city'],
+                          pin: item['pin'],
+                          location: item['location']
+                   ));
+                   
                   },
                   child: Text(
-                    "Remove Book",
+                    "View Order",
                     style: TextStyle(color: Colors.black),
-
                   ),
                 ),
               ),

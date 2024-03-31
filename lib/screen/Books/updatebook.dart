@@ -3,34 +3,38 @@ import 'dart:typed_data';
 import 'package:bookbazaar/apis/book_api.dart';
 import 'package:bookbazaar/components/route.dart';
 import 'package:bookbazaar/components/user_input_feild.dart';
-import 'package:bookbazaar/screen/product_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../components/custom_appbar.dart';
-import '../components/error _snackbar.dart';
+import '../../components/custom_appbar.dart';
+import '../../components/error _snackbar.dart';
+import '../Product/product_screen.dart';
 
-class AddNewBook extends StatefulWidget {
-  final String? initialBookName;
-  final String? initialBookPrice;
-  final String? initialBookAuthor;
-  final String? initialBookDesc;
-  final String? initialBookImage;
+class UpdateBook extends StatefulWidget {
+  final String initialBookName;
+  final int initialBookPrice;
+  final String initialBookAuthor;
+  final String initialBookDesc;
+  final String initialBookImage;
+  final String category;
+  final int bid;
 
-  const AddNewBook({
+  const UpdateBook({
     Key? key,
-    this.initialBookName,
-    this.initialBookPrice,
-    this.initialBookAuthor,
-    this.initialBookDesc,
-    this.initialBookImage,
+   required this.initialBookName,
+   required this.initialBookPrice,
+   required this.initialBookAuthor,
+   required this.initialBookDesc,
+   required this.initialBookImage,
+   required this.category,
+   required this.bid
   }) : super(key: key);
 
   @override
-  State<AddNewBook> createState() => _AddNewBookState();
+  State<UpdateBook> createState() => _UpdateBookState();
 }
 
-class _AddNewBookState extends State<AddNewBook> {
+class _UpdateBookState extends State<UpdateBook> {
   late TextEditingController booknamecontroller;
   late TextEditingController bookpricecontroller;
   late TextEditingController bookauthorcontroller;
@@ -40,6 +44,7 @@ class _AddNewBookState extends State<AddNewBook> {
   String dropdownvalue = "Select Category";
   XFile? image;
   String imagebuttontext = "Upload";
+  int bid = 0;
 
   // List of items in our dropdown menu
   var items = [
@@ -54,10 +59,12 @@ class _AddNewBookState extends State<AddNewBook> {
   void initState() {
     super.initState();
     booknamecontroller = TextEditingController(text: widget.initialBookName);
-    bookpricecontroller = TextEditingController(text: widget.initialBookPrice);
+    bookpricecontroller = TextEditingController(text: widget.initialBookPrice.toString());
     bookauthorcontroller =
         TextEditingController(text: widget.initialBookAuthor);
     bookdesccontroller = TextEditingController(text: widget.initialBookDesc);
+    dropdownvalue = widget.category;
+    bid = widget.bid;
   }
 
   @override
@@ -120,7 +127,8 @@ class _AddNewBookState extends State<AddNewBook> {
 
       Uint8List? _bytes = await image?.readAsBytes();
       String base64Image = base64Encode(_bytes!);
-        Map<dynamic,dynamic>   response = await BookAPI.addBook(
+        Map<dynamic,dynamic>   response = await BookAPI.updateBook(
+          bID: bid,
         bookname: booknamecontroller.text,
         price: int.parse(bookpricecontroller.text),
         description: bookdesccontroller.text,
@@ -129,7 +137,8 @@ class _AddNewBookState extends State<AddNewBook> {
         category: dropdownvalue
       );
       if (response["success"]) {
-        ProductPageclass product = ProductPageclass(name: response["bookname"], imageUrl: response["image"], price: response["price"]);
+      List<ProductPageclass> product = [];
+      product.add(ProductPageclass(name: response["bookname"], imageUrl: response["image"], price: response["price"],uid: response['uID'],bid: response['bID'],desc: response['description'],category: response['category'],author: response['author']));
         Navigator.pop(context);
            RouterClass.AddScreen(context,ProductPage(product:product));
            
@@ -151,7 +160,7 @@ class _AddNewBookState extends State<AddNewBook> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: CustomAppBar.screenAppbar("New Book"),
+      appBar: CustomAppBar.screenAppbar("Update Book"),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.0),

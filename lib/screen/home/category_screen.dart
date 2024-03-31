@@ -1,8 +1,9 @@
 import "package:bookbazaar/apis/category_api.dart";
 import "package:bookbazaar/components/shimmer_effect.dart";
 import "package:flutter/material.dart";
-import "../components/custom_appbar.dart";
-import "../components/user_input_feild.dart";
+
+import "../../components/custom_appbar.dart";
+import "../../components/user_input_feild.dart";
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({super.key});

@@ -1,4 +1,10 @@
+import 'package:bookbazaar/apis/user_api.dart';
+import 'package:bookbazaar/components/route.dart';
 import 'package:flutter/material.dart';
+
+import '../screen/Address/address.dart';
+import '../screen/Address/update_address.dart';
+
 
 class UserInputFeild {
 Widget inputContainerText(BuildContext context, TextEditingController inputController,
@@ -162,13 +168,6 @@ static List<Widget> addressContainer(
       BuildContext context, List addresss) {
     final mediaQuery = MediaQuery.of(context).size;
     List<Widget> data = [];
-    if(addresss.isEmpty){
-
-      data.add( Expanded(child: Center(
-                    child: Text('No addresses found'),
-                  )) );
-      return data;
-    }
     for (var item in addresss) {
       data.add(Container(
   margin: EdgeInsets.fromLTRB(25, 10, 0, 10),
@@ -187,31 +186,192 @@ static List<Widget> addressContainer(
   ),
   child: Padding(
     padding: const EdgeInsets.all(12.0),
-    child: Column(
+    child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "${item["country"]}, ${item['state']}, ${item['city']}",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${item["country"]}, ${item['state']}, ${item['city']}",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                "${item['location']} - ${item['pin']}",
+                style: TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+            ],
           ),
         ),
-        SizedBox(height: 8),
-        Text(
-          "${item['location']} - ${item['pin']}",
-          style: TextStyle(
-            fontSize: 14,
-          ),
+        IconButton(
+          icon: Icon(Icons.edit),
+          onPressed: () {
+            print(item['aID']);
+            RouterClass.AddScreen(context,
+           UpdateAddress(defaultCountry: item['country'], defaultState: item['state'], defaultCity: item['city'], defaultPin: item['pin'], defaultNear: item['location'], aid: item['aID']));
+          },
+        ),
+        IconButton(
+          icon: Icon(Icons.delete),
+          onPressed: () {
+            ApiService.deleteAddress(aid: item['aID']);
+           Navigator.pop(context);
+            RouterClass.AddScreen(context, AddressListScreen());
+          },
         ),
       ],
     ),
   ),
-      ));
+));
+;
       
     }
     return data;
   }
+
+
+static List<Widget> addressSelectContainer(
+  BuildContext context, List addresss, int selectedAddressIndex, Function(int) onChanged) {
+  final mediaQuery = MediaQuery.of(context).size;
+  List<Widget> data = [];
+  for (int index = 0; index < addresss.length; index++) {
+    var item = addresss[index];
+    data.add(
+      ListTile(
+        title: Container(
+          margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+          width: mediaQuery.width * 0.88,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${item["country"]}, ${item['state']}, ${item['city']}",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        "${item['location']} - ${item['pin']}",
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+              ],
+            ),
+          ),
+        ),
+        leading: Radio(
+          value: index, // Set the index as the value for the radio button
+          groupValue: selectedAddressIndex,
+          onChanged: (value) {
+            onChanged(value!); // Call the provided onChanged function
+          },
+        ),
+      ),
+    );
+  }
+  return data;
+}
+
+
+static List<Widget> paymentOptionSelectContainer(
+  BuildContext context, List<dynamic> paymentOptions, int selectedAddressIndex, Function(int) onChanged) {
+  final mediaQuery = MediaQuery.of(context).size; // Move MediaQuery here
+  List<Widget> data = [];
+  for (int index = 0; index < paymentOptions.length; index++) {
+    var item = paymentOptions[index];
+    data.add(
+      ListTile(
+        title: Container(
+          margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+          width: mediaQuery.width * 0.88,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${item['option']}",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                       SizedBox(height: 8),
+                      Text(
+                       "${item['condition']}",
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+      
+                    ],
+                  ),
+                ),
+                
+              ],
+            ),
+          ),
+        ),
+        leading: Radio(
+          value: index, // Set the index as the value for the radio button
+          groupValue: selectedAddressIndex,
+          onChanged: (value) {
+            onChanged(value!); // Call the provided onChanged function
+          },
+        ),
+      ),
+    );
+  }
+  return data;
+}
 
 
 }

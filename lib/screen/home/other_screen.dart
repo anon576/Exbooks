@@ -1,11 +1,12 @@
 import "package:bookbazaar/components/custom_appbar.dart";
 import "package:bookbazaar/components/user_input_feild.dart";
-import "package:bookbazaar/screen/address.dart";
-import "package:bookbazaar/screen/books_screen.dart";
-import "package:bookbazaar/screen/profile_screen.dart";
 import "package:flutter/material.dart";
 
-import "../components/route.dart";
+import "../../components/route.dart";
+import "../Address/address.dart";
+import "../Books/books_screen.dart";
+import "../Order/order_screen.dart";
+import "../User/profile_screen.dart";
 
 class OtherScreen extends StatefulWidget {
   const OtherScreen({super.key});
@@ -30,7 +31,9 @@ class _OtherScreenState extends State<OtherScreen> {
            RouterClass.AddScreen(context,ProfileScreen());
           }, _isLoading),
           const SizedBox(height: 20),
-          feild.buttonContainer(context, "Your Orders", () async {}, _isLoading),
+          feild.buttonContainer(context, "Your Orders", () async {
+            RouterClass.AddScreen(context, Order());
+          }, _isLoading),
            const SizedBox(height: 20),
           feild.buttonContainer(context, "Your Books", () async {
             RouterClass.AddScreen(context, Books());

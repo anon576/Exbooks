@@ -1,11 +1,11 @@
 import "package:bookbazaar/components/route.dart";
-import "package:bookbazaar/screen/add_book_screen.dart";
 import "package:flutter/material.dart";
+import "../../apis/book_api.dart";
+import "../../components/book_built.dart";
+import "../../components/custom_appbar.dart";
+import "../../components/shimmer_effect.dart";
+import "add_book_screen.dart";
 
-import "../apis/book_api.dart";
-import "../components/book_built.dart";
-import "../components/custom_appbar.dart";
-import "../components/shimmer_effect.dart";
 
 class Books extends StatefulWidget {
   const Books({super.key});
@@ -22,11 +22,15 @@ class _BooksState extends State<Books> {
   bool isbookLoaded = false;
 
  Future<void> fetchCart() async {
-  List<dynamic> newListCategory = await BookAPI.getAllBooks();
+  List<dynamic> newListCategory = await BookAPI.getUserBooks();
   if (mounted) { // Check if the widget is still mounted
     if (newListCategory.isNotEmpty) {
       setState(() {
         bookList.addAll(newListCategory);
+        isbookLoaded = true;
+      });
+    }else{
+      setState(() {
         isbookLoaded = true;
       });
     }
@@ -36,6 +40,14 @@ class _BooksState extends State<Books> {
 
   List<Widget> screen() {
     if (isbookLoaded) {
+       if(bookList.isEmpty){
+
+        List<Widget> data = [];
+         data.add(  Center(
+                    child: Text('No Book Found'),
+                  ));
+        return data;
+      }
       return BookBuild.buildBook(context, bookList);
     } else {
       return ShimmerEffect.yourBooksShimmer(context);
@@ -76,7 +88,7 @@ class _BooksState extends State<Books> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Total Price:',
+                      'Total Books:${bookList.length}',
                       style: TextStyle(
                           fontWeight: FontWeight.bold, color: Colors.white),
                     ),

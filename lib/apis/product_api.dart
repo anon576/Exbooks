@@ -2,18 +2,21 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ProductAPI {
-  static Future<List<dynamic>> fetchProducts(
-      {int page = 1, int pageSize = 10}) async {
+  static Future<Map<String,dynamic>> fetchProducts(
+      {required int range
+      }) async {
     final response = await http.get(Uri.parse(
-        'https://fakestoreapi.com/products?_page=$page&_limit=$pageSize'));
+        'http://192.168.43.192:5000/get_feed?lastbookid=$range'));
+
     if (response.statusCode == 200) {
-      List<dynamic> data = jsonDecode(response.body);
-      return data;
+      Map<String,dynamic> fetchedBooks = jsonDecode(response.body);
+
+      return fetchedBooks;
     } else {
-      throw Exception('Failed to load products');
+     return {};
     }
   }
-
+                                                                                                                                                                                                                                                                                                                 
   static Future<List<dynamic>> fetchCarsoul() async {
     final response =
         await http.get(Uri.parse('https://fakestoreapi.com/products?limit=5'));

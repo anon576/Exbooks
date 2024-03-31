@@ -4,7 +4,7 @@ import 'package:bookbazaar/components/error%20_snackbar.dart';
 import 'package:bookbazaar/components/user_input_feild.dart';
 import 'package:flutter/material.dart';
 
-import '../components/route.dart';
+import '../../components/route.dart';
 
 class UserData extends StatefulWidget {
   const UserData({super.key});

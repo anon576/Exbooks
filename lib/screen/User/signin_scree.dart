@@ -3,8 +3,9 @@ import 'package:bookbazaar/components/route.dart';
 import 'package:bookbazaar/components/share_prefs.dart';
 import 'package:bookbazaar/components/user_input_feild.dart';
 import 'package:flutter/material.dart';
-import '../apis/user_api.dart';
-import '../components/error _snackbar.dart';
+
+import '../../apis/user_api.dart';
+import '../../components/error _snackbar.dart';
 
 class StartUp extends StatefulWidget {
   StartUp({super.key});

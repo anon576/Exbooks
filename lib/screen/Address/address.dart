@@ -1,10 +1,12 @@
 import 'package:bookbazaar/components/route.dart';
-import 'package:bookbazaar/screen/add_address.dart';
 import 'package:flutter/material.dart';
-import '../apis/user_api.dart';
-import '../components/custom_appbar.dart';
-import '../components/shimmer_effect.dart';
-import '../components/user_input_feild.dart';
+
+import '../../apis/user_api.dart';
+import '../../components/custom_appbar.dart';
+import '../../components/shimmer_effect.dart';
+import '../../components/user_input_feild.dart';
+import 'add_address.dart';
+
 
 class AddressListScreen extends StatefulWidget {
   @override
@@ -24,6 +26,10 @@ class _AddressListScreenState extends State<AddressListScreen> {
         _addresses.addAll(address);
         addressloaded = true;
       });
+    }else{
+      setState(() {
+        addressloaded = true;
+      });
     }
   }
   }
@@ -32,9 +38,9 @@ class _AddressListScreenState extends State<AddressListScreen> {
     if (addressloaded) {
       if(_addresses.isEmpty){
         List<Widget> data = [];
-         data.add( Expanded(child: Center(
+         data.add(  Center(
                     child: Text('No addresses found'),
-                  )) );
+                  ));
         return data;
       }
       

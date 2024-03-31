@@ -2,8 +2,9 @@ import "package:bookbazaar/components/error%20_snackbar.dart";
 import "package:bookbazaar/components/share_prefs.dart";
 import "package:flutter/material.dart";
 
-import "../components/custom_appbar.dart";
-import "../components/user_input_feild.dart";
+import "../../apis/user_api.dart";
+import "../../components/custom_appbar.dart";
+import "../../components/user_input_feild.dart";
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -30,6 +31,28 @@ class ProfileScreenState extends State<ProfileScreen> {
           adresscontroller.text = await SharePrefs.readPrefs("city", "string");
 
   }
+
+
+Future<void> UpdateUser() async {
+  try {
+      bool response = await ApiService.updateUser(
+          name: namecontroller.text,
+          lastname: lastnamecontroller.text,
+          mobileNo: mobilecontroller.text,
+          city: adresscontroller.text);
+      if (response) {
+          InputComponent.showWarningSnackBar(context, "Updated Successfully");
+      } else {
+        InputComponent.showWarningSnackBar(context, "Server Error");
+      }
+    } catch (error) {
+      InputComponent.showWarningSnackBar(context, error);
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+}
 
   @override
   void initState() {
@@ -80,12 +103,18 @@ class ProfileScreenState extends State<ProfileScreen> {
               InputComponent.showWarningSnackBar(
                   context, "Enter Valid Mobile No");
             } else {
+              if(buttonText == "Save Profile"){
+                setState(() {
+                  isLoading = true;
+                });
+                  await UpdateUser();
+              }
               setState(() {
                 isLoading = false;
                 readOnly = false;
                 buttonText = "Save Profile";
               });
-              // await UpdateUser();
+              
             }
           }, isLoading),
           ],

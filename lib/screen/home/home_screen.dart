@@ -19,8 +19,7 @@ class _HomeState extends State<Home> {
   bool productLoaded = false;
   List<dynamic> carsoulProduct = [];
   List<dynamic> listProduct = [];
-  int currentPage = 1;
-  int pageSize = 10; // Number of items to load per page
+  int lastbookid = 0;
   ScrollController _scrollController = ScrollController();
 
   Future<void> fetchCarsoul() async {
@@ -33,13 +32,15 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> fetchProducts() async {
-    List<dynamic> newListProduct =
-        await ProductAPI.fetchProducts(page: currentPage, pageSize: pageSize);
+    Map<String,dynamic>  newProduct =
+        await ProductAPI.fetchProducts(range: lastbookid);
+        List<dynamic> newListProduct = newProduct['books'];
+        lastbookid = newProduct['lastbookid'];
     if (mounted) {
       if (newListProduct.isNotEmpty) {
         setState(() {
           listProduct.addAll(newListProduct);
-          currentPage++;
+          lastbookid++;
           productLoaded = true;
         });
       }

@@ -106,6 +106,58 @@ class ApiService {
     }
   }
 
+  static Future<bool> updateUser({
+    required String name,
+    required String lastname,
+    required String mobileNo,
+    required String city,
+  }) async {
+    Map<String, dynamic> userData = {
+     "name":name,
+     "lasatname":lastname,
+     "mobileno":mobileNo,
+     "city":city,
+     "userid":await SharePrefs.readPrefs("userID", "int")
+      // Add other fields as needed
+    };
+    String jsonData = jsonEncode(userData);
+
+    // Specify the API endpoint URL
+    Uri apiUrl = Uri.parse('http://192.168.43.192:5000/update_user');
+
+    try {
+      http.Response response = await http.post(
+        apiUrl,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonData,
+      );
+
+      // Handle the response as needed
+      if (response.statusCode == 200) {
+        dynamic responseData = jsonDecode(response.body);
+
+        if (responseData['success']) {
+          SharePrefs.storePrefs("name", name, "string");
+          SharePrefs.storePrefs("lastname", lastname, "string");
+          SharePrefs.storePrefs("mobile", mobileNo,"string");
+          SharePrefs.storePrefs("city", city, "string");
+          return true;
+        }
+      return false;
+      } else {
+        // Error
+        print('Failed to send data. Status code: ${response.statusCode}');
+        // Return a different integer value for error cases
+        return false;
+      }
+    } catch (error) {
+      // Handle any errors that occurred during the HTTP request
+      print('Error sending data: $error');
+      // Return a different integer value for error cases
+      return false;
+    }
+  }
+
  static Future<bool> addAddress({
     required String country,
     required String state,
@@ -182,4 +234,75 @@ int userid = await SharePrefs.readPrefs("userID", "int");
   }
     
 
+    static Future<bool> updateAddress({
+      required int aid,
+    required String country,
+    required String state,
+    required String city,
+    required int pin,
+    required String near
+  }) async {
+    Map<String, dynamic> userData = {
+      "aid":aid,
+     "country":country,
+     "city":city,
+     "state":state,
+     "pin":pin,
+     "near":near,
+     "userid":await SharePrefs.readPrefs("userID", "int")
+      // Add other fields as needed
+    };
+    String jsonData = jsonEncode(userData);
+
+    // Specify the API endpoint URL
+    Uri apiUrl = Uri.parse('http://192.168.43.192:5000/update_address');
+
+    try {
+      http.Response response = await http.post(
+        apiUrl,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonData,
+      );
+
+      // Handle the response as needed
+      if (response.statusCode == 200) {
+        dynamic responseData = jsonDecode(response.body);
+
+        if (responseData['success']) {
+          return true;
+        }
+      return false;
+      } else {
+        // Error
+        print('Failed to send data. Status code: ${response.statusCode}');
+        // Return a different integer value for error cases
+        return false;
+      }
+    } catch (error) {
+      // Handle any errors that occurred during the HTTP request
+      print('Error sending data: $error');
+      // Return a different integer value for error cases
+      return false;
+    }
+  }
+
+static Future<bool> deleteAddress({
+    required int aid,
+  }) async {
+    try {
+      final apiUrl = Uri.parse('http://192.168.43.192:5000/delete_address/$aid');
+      final response = await http.delete(apiUrl);
+      
+      if (response.statusCode == 200) {
+        // Address deleted successfully
+        return true;
+      } else {
+        // Failed to delete address
+        return false;
+      }
+    } catch (error) {
+      // Error occurred during the deletion process
+      return false;
+    }
+  }
 }

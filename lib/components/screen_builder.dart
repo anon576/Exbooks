@@ -1,7 +1,8 @@
-import 'package:bookbazaar/screen/product_screen.dart';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
+import '../screen/Product/product_screen.dart';
 import 'route.dart';
 
 class Products {
@@ -36,7 +37,8 @@ class Products {
             borderRadius:
                 BorderRadius.circular(20), // Set the border radius here
             child: Image.network(
-              item['image'],
+                item['image'],
+             
               fit: BoxFit.cover,
             ),
           ),
@@ -60,32 +62,46 @@ class Products {
       ),
     );
     contanerList.add(carsoul);
-    for (var i = 0; i < listProduct.length; i += 2) {
-      contanerList.add(Container(
-        margin: EdgeInsets.fromLTRB(25, 10, 25, 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            buildBookContainer(context, listProduct[i]["image"],
-                listProduct[i]['title'], listProduct[i]["price"]),
-            SizedBox(width: mediaQuery.width * .04),
-            buildBookContainer(context, listProduct[i + 1]["image"],
-                listProduct[i + 1]['title'], listProduct[i + 1]["price"])
-          ],
-        ),
-      ));
-    }
+   for (var i = 0; i < listProduct.length; i += 2) {
+  if (i + 1 < listProduct.length) {
+    contanerList.add(Container(
+      margin: EdgeInsets.fromLTRB(25, 10, 25, 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          buildBookContainer(context, listProduct[i]["imagepath"], listProduct[i]['bookname'], listProduct[i]["price"],listProduct[i]['author'],listProduct[i]['uID'],listProduct[i]['bID'],listProduct[i]['description'],listProduct[i]['category']),
+          SizedBox(width: mediaQuery.width * .04),
+          buildBookContainer(context, listProduct[i + 1]["imagepath"], listProduct[i + 1]['bookname'], listProduct[i + 1]["price"],listProduct[i+1]['author'],listProduct[i+1]['uID'],listProduct[i+1]['bID'],listProduct[i+1]['description'],listProduct[i+1]['category']),
+        ],
+      ),
+    ));
+  } else {
+    // Handle the case where there's only one element left in the list
+    contanerList.add(Container(
+      margin: EdgeInsets.fromLTRB(25, 10, 25, 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          buildBookContainer(context, listProduct[i]["imagepath"], listProduct[i]['bookname'], listProduct[i]["price"],listProduct[i]['author'],listProduct[i]['uID'],listProduct[i]['bID'],listProduct[i]['description'],listProduct[i]['category']),
+        ],
+      ),
+    ));
+  }
+}
+
     return Column(
       children: contanerList,
     );
   }
 
   static Widget buildBookContainer(
-      context, String image, String title, dynamic price) {
+      context, String image, String title, dynamic price,String author, dynamic uid,dynamic bid,String desc,String category) {
     final mediaQuery = MediaQuery.of(context).size;
     return GestureDetector(
         onTap: () {
-          ProductPageclass product = ProductPageclass(name: title, imageUrl: image, price: price);
+          print(bid);
+          List<ProductPageclass> product = [];
+          product.add(ProductPageclass(name: title, imageUrl: image, price: price,author: author, desc: desc,category: category, uid: uid,bid: bid));
            RouterClass.AddScreen(context,ProductPage(product:product));
         },
         child: Container(
@@ -114,7 +130,7 @@ class Products {
                   borderRadius:
                       BorderRadius.circular(7), // Set the border radius here
                   child: Image.network(
-                    image,
+                    "http://192.168.43.192:5000/$image",
                     fit: BoxFit.cover,
                   ),
                 ),

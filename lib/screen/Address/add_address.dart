@@ -3,8 +3,9 @@ import 'package:bookbazaar/components/custom_appbar.dart';
 import 'package:bookbazaar/components/error%20_snackbar.dart';
 import 'package:bookbazaar/components/route.dart';
 import 'package:bookbazaar/components/user_input_feild.dart';
-import 'package:bookbazaar/screen/address.dart';
 import 'package:flutter/material.dart';
+
+import 'address.dart';
 
 class AddAddress extends StatefulWidget {
   const AddAddress({super.key});

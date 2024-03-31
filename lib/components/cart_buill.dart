@@ -1,7 +1,9 @@
+import "package:bookbazaar/apis/cart_api.dart";
+import "package:bookbazaar/components/error%20_snackbar.dart";
 import "package:flutter/material.dart";
 
 class CartBuild {
-  static List<Widget> buldCart(BuildContext context, List<dynamic> data) {
+  static List<Widget> buldCart(BuildContext context, List<dynamic> data,Function() setStateCallback) {
     final mediaQuery = MediaQuery.of(context).size;
     List<Widget> returnData = [];
 
@@ -25,7 +27,8 @@ class CartBuild {
               ],
             ),
             child: Image.network(
-              item['image'],
+              "http://192.168.43.192:5000/${item['imagepath']}",
+             
               fit: BoxFit.cover,
             ),
           ),
@@ -34,10 +37,10 @@ class CartBuild {
           ),
           Column(
             children: [
-              buildInfoContainer(context, item['title']),
+              buildInfoContainer(context, item['bookname']),
               buildInfoContainer(context, item['price']),
-              buildInfoContainer(context, "Category"),
-              buildInfoContainer(context, "Total"),
+              buildInfoContainer(context, item["category"]),
+              buildInfoContainer(context, item["author"]),
               Container(
                 margin: EdgeInsets.only(top: 12),
                 padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -47,7 +50,15 @@ class CartBuild {
                     color: Colors.yellow,
                     borderRadius: BorderRadius.circular(12)),
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                      bool itemcart = await CartAPI.deleteCartItems(bookID: item['bID']);
+                      if(itemcart){
+                        setStateCallback();
+                      }else{
+                        InputComponent.showWarningSnackBar(context, "Server Error");
+                      }
+
+                  },
                   child: Text(
                     "Remove Book",
                     style: TextStyle(color: Colors.black),
@@ -70,9 +81,12 @@ class CartBuild {
       height: mediaQuery.height * .03,
       width: mediaQuery.width * .5,
       decoration: BoxDecoration(
-          color: Colors.black, borderRadius: BorderRadius.circular(2)),
+        
+          color: Colors.black, 
+          borderRadius: BorderRadius.circular(7)),
       child: Text(
         "${data}",
+        textAlign: TextAlign.center,
         style: TextStyle(color: Colors.white),
       ),
     );
