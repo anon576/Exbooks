@@ -61,7 +61,7 @@ The backend for Maya is developed using [Backend Framework/Technology] (replace 
 
 ### Repository
 
-- **GitHub Repository**: [Maya Flutter App Backend](https://github.com/anon576/ExBooks_Backend)
+- **GitHub Repository**: [Exbooks Backend](https://github.com/anon576/ExBooks_Backend)
 
 ## Usage
 
