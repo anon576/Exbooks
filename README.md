@@ -55,6 +55,14 @@ Exbooks is a web application designed for buying and selling second-hand books. 
 
 Ensure you have the required environment variables set up in your `.env` file. Adjust any configurations in `config.py` or similar configuration files as needed.
 
+## Backend
+
+The backend for Maya is developed using [Backend Framework/Technology] (replace with the actual technology used). It handles data storage, user authentication, and communication with the Flutter frontend.
+
+### Repository
+
+- **GitHub Repository**: [Maya Flutter App Backend](https://github.com/anon576/ExBooks_Backend)
+
 ## Usage
 
 - **Register/Log In**: Create an account or log in to list and purchase books.
